@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Администрирование — Лекционный сайт</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="config.js"></script>
+  <script defer src="admin.js"></script>
+</head>
+<body data-page="admin">
+  <header class="site-header inner-header">
+    <a class="brand" href="index.html"><img src="assets/logo.jpg" alt="Логотип ФСПО ГГНТУ"><span class="brand-divider"></span><span class="brand-title">Лекционный сайт</span></a>
+    <a class="back-link" href="index.html">На главную</a>
+  </header>
+  <main class="page-main admin-main">
+    <h1>Панель администратора</h1>
+    <section id="auth-panel" class="admin-panel">
+      <h2>Вход</h2>
+      <form id="login-form" class="stack">
+        <label>Email<input name="email" type="email" required autocomplete="username"></label>
+        <label>Пароль<input name="password" type="password" required autocomplete="current-password"></label>
+        <button class="solid-button" type="submit">Войти</button>
+      </form>
+    </section>
+    <section id="upload-panel" class="admin-panel" hidden>
+      <div class="admin-heading"><h2>Добавить лекцию</h2><button id="logout-button" class="text-button" type="button">Выйти</button></div>
+      <form id="upload-form" class="stack">
+        <label>Название лекции<input name="title" type="text" required maxlength="180" placeholder="Например: Введение в информационные системы"></label>
+        <label>Файл Word (.docx)<input name="file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required></label>
+        <button class="solid-button" type="submit">Загрузить лекцию</button>
+      </form>
+      <p class="hint">После загрузки лекция появится в разделе «Все лекции» и в поиске.</p>
+      <h2 class="admin-list-title">Загруженные лекции</h2>
+      <section id="admin-lectures" class="lecture-list"></section>
+    </section>
+    <p id="admin-message" class="status-message" role="status"></p>
+  </main>
+  <footer class="site-footer"><span>Автор: Эльмурзаев Ю.С.</span></footer>
+</body>
+</html>
