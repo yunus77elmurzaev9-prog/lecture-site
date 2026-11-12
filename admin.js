@@ -37,10 +37,11 @@ const sb = () => {
   }
   document.getElementById("login-form").addEventListener("submit", async e => {
   e.preventDefault();
+    const form = e.currentTarget;
   say("Выполняется вход…");
 
   try {
-    const f = new FormData(e.currentTarget);
+    const f = new FormData(form);
 
     const result = await Promise.race([
       sb().auth.signInWithPassword({
@@ -56,7 +57,7 @@ const sb = () => {
       return say(result.error.message, true);
     }
 
-    e.currentTarget.reset();
+    form.reset();
     say("Вход выполнен.");
     await refreshSession();
 
