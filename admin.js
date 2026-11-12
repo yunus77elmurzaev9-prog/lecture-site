@@ -8,9 +8,14 @@
   const say = (text, error=false) => { message.textContent = text; message.className = "status-message" + (error ? " error" : ""); };
   const escapeHtml = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   function ready() {
-    if (!configured()) say("Сначала настройте Supabase по инструкции README.", true);
-    else refreshSession();
-  }
+  if (!configured()) {
+    say("Не настроен Supabase в config.js.", true);
+  } else if (!window.supabase || typeof window.supabase.createClient !== "function") {
+    say("Не загрузилась библиотека Supabase. Проверьте подключение к интернету или блокировщик рекламы.", true);
+  } else {
+    refreshSession();
+  }
+}
   async function refreshSession() {
     const {data:{session}} = await sb().auth.getSession();
     authPanel.hidden = !!session;
@@ -18,12 +23,34 @@
     if (session) loadAdminList();
   }
   document.getElementById("login-form").addEventListener("submit", async e => {
-    e.preventDefault(); say("Выполняется вход…");
-    const f = new FormData(e.currentTarget);
-    const {error} = await sb().auth.signInWithPassword({email:f.get("email"), password:f.get("password")});
-    if (error) return say(error.message, true);
-    e.currentTarget.reset(); say("Вход выполнен."); refreshSession();
-  });
+  e.preventDefault();
+  say("Выполняется вход…");
+
+  try {
+    const f = new FormData(e.currentTarget);
+
+    const result = await Promise.race([
+      sb().auth.signInWithPassword({
+        email: f.get("email"),
+        password: f.get("password")
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Сервер не ответил за 20 секунд. Проверьте интернет.")), 20000)
+      )
+    ]);
+
+    if (result.error) {
+      return say(result.error.message, true);
+    }
+
+    e.currentTarget.reset();
+    say("Вход выполнен.");
+    await refreshSession();
+
+  } catch (error) {
+    say("Ошибка входа: " + error.message, true);
+  }
+});
   document.getElementById("logout-button").addEventListener("click", async () => {
     await sb().auth.signOut(); say("Вы вышли из панели."); refreshSession();
   });
