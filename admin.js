@@ -1,7 +1,20 @@
 (() => {
   const configured = () => window.SUPABASE_URL && window.SUPABASE_ANON_KEY &&
     !window.SUPABASE_URL.startsWith("ВСТАВЬТЕ") && !window.SUPABASE_ANON_KEY.startsWith("ВСТАВЬТЕ");
-  const sb = () => configured() ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null;
+  let supabaseClient;
+
+const sb = () => {
+  if (!configured() || !window.supabase?.createClient) return null;
+
+  if (!supabaseClient) {
+    supabaseClient = window.supabase.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_ANON_KEY
+    );
+  }
+
+  return supabaseClient;
+};
   const authPanel = document.getElementById("auth-panel");
   const uploadPanel = document.getElementById("upload-panel");
   const message = document.getElementById("admin-message");
