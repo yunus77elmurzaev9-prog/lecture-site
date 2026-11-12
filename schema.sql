@@ -8,7 +8,6 @@ create table if not exists public.lectures (
 );
 
 alter table public.lectures enable row level security;
-
 create policy "Public can read lectures"
 on public.lectures for select
 to anon, authenticated
