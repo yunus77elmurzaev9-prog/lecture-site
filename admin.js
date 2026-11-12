@@ -69,21 +69,71 @@ const sb = () => {
     await sb().auth.signOut(); say("Вы вышли из панели."); refreshSession();
   });
   document.getElementById("upload-form").addEventListener("submit", async e => {
-    e.preventDefault();
-    const form = e.currentTarget, data = new FormData(form);
-    const title = String(data.get("title")).trim(), file = data.get("file");
-    if (!file || !file.name.toLowerCase().endsWith(".docx")) return say("Выберите файл формата .docx.", true);
-    const id = crypto.randomUUID(), path = `${id}.docx`;
-    say("Загрузка документа…");
-    const {error:uploadError} = await sb().storage.from("lecture-files").upload(path, file, {contentType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document", upsert:false});
-    if (uploadError) return say(uploadError.message, true);
-    const {error:insertError} = await sb().from("lectures").insert({id, title, file_path:path, file_name:file.name});
-    if (insertError) {
-      await sb().storage.from("lecture-files").remove([path]);
-      return say(insertError.message, true);
-    }
-    form.reset(); say("Лекция успешно добавлена."); loadAdminList();
-  });
+  e.preventDefault();
+
+  const form = e.currentTarget;
+  const data = new FormData(form);
+
+  const title = String(data.get("title") || "").trim();
+  const file = data.get("file");
+
+  if (!title) {
+    return say("Введите название лекции.", true);
+  }
+
+  if (!file || !file.name.toLowerCase().endsWith(".docx")) {
+    return say("Выберите файл формата .docx.", true);
+  }
+
+  const id = crypto.randomUUID();
+  const path = `${id}.docx`;
+
+  const timeout = (promise, stage) =>
+    Promise.race([
+      promise,
+      new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error(`Превышено время ожидания: ${stage}.`)),
+          30000
+        )
+      )
+    ]);
+
+  try {
+    say("Этап 1/2: отправка файла в хранилище…");
+
+    const { error: uploadError } = await timeout(
+      sb().storage.from("lecture-files").upload(path, file, {
+        contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        upsert: false
+      }),
+      "загрузка файла"
+    );
+
+    if (uploadError) throw uploadError;
+
+    say("Этап 2/2: сохранение информации о лекции…");
+
+    const { error: insertError } = await timeout(
+      sb().from("lectures").insert({
+        id,
+        title,
+        file_path: path,
+        file_name: file.name
+      }),
+      "сохранение записи"
+    );
+
+    if (insertError) throw insertError;
+
+    form.reset();
+    say("Лекция успешно добавлена.");
+    await loadAdminList();
+
+  } catch (error) {
+    say("Ошибка загрузки: " + error.message, true);
+  }
+});
   async function loadAdminList() {
     const area = document.getElementById("admin-lectures");
     const {data,error} = await sb().from("lectures").select("id,title").order("title");
