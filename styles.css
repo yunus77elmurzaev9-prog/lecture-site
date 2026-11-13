@@ -213,4 +213,172 @@ body[data-page="home"] .site-footer {
   .quote-text {
     font-size: 15px;
   }
+body[data-page="search"] {
+  --paper: #f3f0e9;
+  --ink: #30343a;
+  --wine: #873b49;
+  color: var(--ink);
+  background: var(--paper);
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
+}
+
+body[data-page="search"]::before {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background: url("animals.svg") center center / 100% 100% no-repeat;
+  opacity: .105;
+}
+
+body[data-page="search"] .site-header {
+  padding: 20px 34px;
+  border-bottom: 1px solid rgba(135, 59, 73, .13);
+}
+
+body[data-page="search"] .brand {
+  gap: 20px;
+}
+
+body[data-page="search"] .brand img {
+  width: 110px;
+  height: 82px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+body[data-page="search"] .brand-divider {
+  width: 1px;
+  background: #a58b7e;
+}
+
+body[data-page="search"] .brand-title {
+  color: #34343a;
+  font-size: clamp(25px, 3vw, 36px);
+}
+
+body[data-page="search"] .back-link {
+  color: #873b49;
+  transition: opacity .2s;
+}
+
+body[data-page="search"] .back-link:hover {
+  opacity: .65;
+  text-decoration: none;
+}
+
+body[data-page="search"] .page-main {
+  width: min(900px, calc(100% - 40px));
+  margin: 65px auto 90px;
+}
+
+body[data-page="search"] .page-main h1 {
+  color: #34343a;
+  font-size: clamp(30px, 4vw, 40px);
+  margin-bottom: 30px;
+}
+
+body[data-page="search"] .search-input {
+  height: 62px;
+  padding: 0 22px;
+  border: 1px solid #c8bcb1;
+  border-radius: 15px;
+  background: rgba(255,255,255,.55);
+  color: #30343a;
+  font-size: 16px;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+body[data-page="search"] .search-input:focus {
+  border-color: #873b49;
+  background: rgba(255,255,255,.85);
+  box-shadow: 0 0 0 3px rgba(135,59,73,.10);
+}
+
+body[data-page="search"] .search-input::placeholder {
+  color: #91877f;
+}
+
+body[data-page="search"] .hint {
+  color: #81776d;
+  margin-top: 12px;
+}
+
+body[data-page="search"] .lecture-list {
+  margin-top: 30px;
+  border: 0;
+}
+
+body[data-page="search"] .lecture-list > .muted {
+  padding: 18px 0;
+  border-top: 1px solid rgba(135,59,73,.2);
+  color: #81776d;
+}
+
+body[data-page="search"] .lecture-row {
+  margin: 12px 0;
+  padding: 18px 22px;
+  border: 1px solid rgba(161,141,131,.35);
+  border-radius: 13px;
+  background: rgba(255,255,255,.48);
+  transition: background .2s, transform .2s, border-color .2s;
+}
+
+body[data-page="search"] .lecture-row:hover {
+  background: rgba(255,255,255,.82);
+  border-color: #b58d91;
+  transform: translateY(-2px);
+}
+
+body[data-page="search"] .lecture-name {
+  color: #34343a;
+}
+
+body[data-page="search"] .row-arrow {
+  color: #873b49;
+}
+
+body[data-page="search"] .site-footer {
+  background: #25272b;
+  color: #eee9e1;
+}
+
+@media (max-width: 650px) {
+  body[data-page="search"]::before {
+    background-size: auto 100%;
+    background-position: center;
+    opacity: .08;
+  }
+
+  body[data-page="search"] .site-header {
+    padding: 14px 16px;
+  }
+
+  body[data-page="search"] .brand {
+    gap: 10px;
+  }
+
+  body[data-page="search"] .brand img {
+    width: 64px;
+    height: 50px;
+  }
+
+  body[data-page="search"] .brand-title {
+    font-size: 20px;
+  }
+
+  body[data-page="search"] .page-main {
+    margin: 38px auto 60px;
+  }
+
+  body[data-page="search"] .search-input {
+    height: 56px;
+  }
+
+  body[data-page="search"] .lecture-row {
+    padding: 15px;
+  }
 }
